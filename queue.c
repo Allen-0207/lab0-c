@@ -258,8 +258,31 @@ void q_sort(struct list_head *head, bool descend) {}
  * the right side of it */
 int q_ascend(struct list_head *head)
 {
-    // https://leetcode.com/problems/remove-nodes-from-linked-list/
-    return 0;
+    if (!head || list_empty(head)) {
+        return 0;
+    }
+    struct list_head *node, *safe;
+    const char *min_value = NULL;
+
+    struct list_head *remove_head = q_new();
+
+    for (node = head->prev, safe = node->prev; node != head;
+         node = safe, safe = node->prev) {
+        char *str = list_entry(node, element_t, list)->value;
+        if (!min_value) {
+            min_value = str;
+            continue;
+        }
+
+        if (strcmp(min_value, str) < 0) {
+            list_move(node, remove_head);
+        } else {
+            min_value = str;
+        }
+    }
+
+    q_free(remove_head);
+    return q_size(head);
 }
 
 /* Remove every node which has a node with a strictly greater value anywhere to
